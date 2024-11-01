@@ -22,3 +22,7 @@ In addition to my Neovim setup, this repository also includes my Tmux configurat
 - **Keybindings**: Custom keybindings for easier navigation and session management.
 - **Session Management**: Scripts to save and restore Tmux sessions.
 - **Vim shortcut navigation**: Seamlessly navigate between panes in neovim and tmux using vim shortcuts
+
+### TPM (Tmux Plugin Manager)
+
+I use [TPM (Tmux Plugin Manager)](https://github.com/tmux-plugins/tpm) to manage my Tmux plugins. TPM makes it easy to install, update, and remove Tmux plugins.
