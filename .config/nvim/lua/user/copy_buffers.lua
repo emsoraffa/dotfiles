@@ -32,6 +32,28 @@ local function guess_language(file_name)
   end
 end
 
+-- Helper function to get the project's directory tree.
+-- You can customize the ignore list or depth flags as needed.
+local function get_project_tree()
+  -- Example ignoring node_modules, target, build, .git
+  -- Adjust as necessary, or remove flags you don't need
+  local ignore_list =
+    "node_modules|dist|build|.git|.idea|__pycache__|migrations|venv|.pytest_cache|mediaroot|uploads|staticroot|.*.pdf|.*.jpg|.*.png"
+  local tree_cmd = string.format("tree -I '%s'", ignore_list)
+
+  -- Attempt to run the 'tree' command. Return nil if 'tree' not found.
+  -- (If you want a friendlier error, add a check for `vim.fn.executable("tree")`)
+  if vim.fn.executable("tree") == 0 then
+    return nil
+  end
+
+  local output = vim.fn.systemlist(tree_cmd)
+  if not output or #output == 0 then
+    return nil
+  end
+  return output
+end
+
 local function copy_open_buffers_to_clipboard()
   local buffer_contents = {}
 
@@ -48,7 +70,20 @@ local function copy_open_buffers_to_clipboard()
 ]]
   )
 
-  -- 2) Loop through all “listed” buffers
+  -- 2) Insert a Project Directory Tree section (if available)
+  local project_tree = get_project_tree()
+  if project_tree then
+    -- We add a helpful heading and a text code fence
+    local tree_section = {
+      "### Project Directory Tree",
+      "```text",
+      table.concat(project_tree, "\n"),
+      "```",
+    }
+    table.insert(buffer_contents, table.concat(tree_section, "\n"))
+  end
+
+  -- 3) Loop through all “listed” buffers
   for _, buf in ipairs(vim.api.nvim_list_bufs()) do
     if vim.fn.buflisted(buf) == 1 then
       local buftype = vim.api.nvim_buf_get_option(buf, "buftype")
@@ -57,7 +92,7 @@ local function copy_open_buffers_to_clipboard()
         if name ~= "" then
           local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
           if #lines > 0 then
-            -- 3) Format each file as a section with code fences
+            -- Format each file as a section with code fences
             local fence = guess_language(name)
             local content = table.concat(lines, "\n")
             local file_section = string.format(
@@ -70,7 +105,6 @@ local function copy_open_buffers_to_clipboard()
               fence,
               content
             )
-
             table.insert(buffer_contents, file_section)
           end
         end
@@ -85,7 +119,7 @@ local function copy_open_buffers_to_clipboard()
   vim.fn.setreg("+", final)
 
   -- 6) Optional message
-  print("All open file buffers copied to clipboard in a chat-friendly format.")
+  print("All open file buffers (and project tree) copied to clipboard in a chat-friendly format.")
 end
 
 -- Create a user command
@@ -95,5 +129,5 @@ end, {})
 
 -- Optional: Create a key mapping (<leader>cb)
 vim.keymap.set("n", "<leader>cb", copy_open_buffers_to_clipboard, {
-  desc = "Copy all open buffers to clipboard (with code fences)",
+  desc = "Copy all open buffers to clipboard (with code fences and project tree)",
 })
