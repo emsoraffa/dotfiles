@@ -9,7 +9,8 @@ My Neovim setup is based on [LazyVim](https://github.com/LazyVim/LazyVim) with s
 ### Features
 
 - **LazyVim Base**: The core of my Neovim setup is built on LazyVim, which offers a solid foundation with sensible defaults.
-- **Custom Plugins**: I've added a few plugins to enhance my development experience like nvim-spider.
+- **Custom Plugins**: I've added a few plugins to enhance my development experience like nvim-spider for more finegrained
+  text navigation and diffview for displaying diffs.
 - **Personal Keybindings**: Custom keybindings to improve my productivity.
 
 ## Tmux Configuration
