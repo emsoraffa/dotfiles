@@ -8,7 +8,7 @@ return {
         function()
           require("dap").continue()
         end,
-        desc = "DAP: Continue execution",
+        desc = "gDAP: Continue execution",
       },
       {
         "<Leader>b",
@@ -20,24 +20,31 @@ return {
     },
     config = function()
       local dap = require("dap")
-      dap.adapters.gdb = {
-        type = "executable",
-        command = "gdb",
-        args = { "-i", "dap" },
+
+      -- 1. Manually define the codelldb adapter, pointing to the executable Mason installed.
+      dap.adapters.codelldb = {
+        type = "server",
+        port = "${port}",
+        executable = {
+          command = "codelldb", -- This should be in your path if installed by Mason
+          args = { "--port", "${port}" },
+        },
       }
 
+      -- 2. Change your C/C++ configuration to use "codelldb" instead of "gdb".
       dap.configurations.cpp = {
         {
-          name = "Launch",
-          type = "gdb",
+          name = "Launch with LLDB",
+          type = "codelldb", -- The only change needed here is this line
           request = "launch",
           program = function()
             return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
           end,
           cwd = "${workspaceFolder}",
-          stopAtBeginningOfMainSubprogram = false,
+          stopOnEntry = true,
         },
       }
+
       dap.configurations.c = dap.configurations.cpp
     end,
   },
