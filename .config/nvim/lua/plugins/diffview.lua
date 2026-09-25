@@ -59,7 +59,7 @@ return {
           local file = view.panel:cur_item() -- Get the current file entry from the file panel
           if file and file.path then
             vim.cmd("DiffviewClose") -- Close Diffview
-            vim.cmd("edit " .. file.path) -- Open the file in a regular buffer
+            vim.cmd("edit " .. vim.fn.fnameescape(file.path))
           else
             print("No file selected in Diffview file panel")
           end

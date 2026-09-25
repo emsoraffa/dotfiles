@@ -7,29 +7,8 @@
 
 -- Optional helper to guess a code fence language from file extension:
 local function guess_language(file_name)
-  file_name = file_name:lower()
-  if file_name:match("%.tsx$") then
-    return "```tsx"
-  elseif file_name:match("%.ts$") then
-    return "```ts"
-  elseif file_name:match("%.js$") then
-    return "```js"
-  elseif file_name:match("%.jsx$") then
-    return "```jsx"
-  elseif file_name:match("%.java$") then
-    return "```java"
-  elseif file_name:match("%.py$") then
-    return "```python"
-  elseif file_name:match("%.css$") then
-    return "```css"
-  elseif file_name:match("%.html$") then
-    return "```html"
-  elseif file_name:match("%.lua$") then
-    return "```lua"
-  else
-    -- Default fallback
-    return "```"
-  end
+  local ft = vim.filetype.match({ filename = file_name })
+  return "```" .. (ft or "")
 end
 
 -- Helper function to get the project's directory tree.

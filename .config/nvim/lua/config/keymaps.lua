@@ -1,6 +1,3 @@
--- Ensure which-key is required and setup
-require("which-key").setup({})
-
 local map = vim.keymap.set
 -- replacing default vim word keys to nvim-spider
 map({ "n", "o", "x" }, "w", "<cmd>lua require('spider').motion('w')<CR>", { desc = "Spider-w" })
